@@ -23,3 +23,6 @@ The project investigates the use of cloud computing technologies in earthquake d
 - Research project planning
 - Academic writing and documentation
 - Cloud computing concepts in disaster management
+- ## Demo System
+A lightweight web-based demo was developed using Firebase Firestore to demonstrate the feasibility of cloud-based data sharing in disaster management scenarios.
+
