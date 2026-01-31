@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Afet Bilgi Sistemi</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <h1>Afet Bilgi Sistemi (Demo)</h1>
+
+  <form id="afetForm">
+    <label>İl:</label><br>
+    <input type="text" id="il" placeholder="Örnek: Ankara"><br><br>
+
+    <label>Afet Türü:</label><br>
+    <input type="text" id="tur" placeholder="Örnek: Deprem"><br><br>
+
+    <label>Durum:</label><br>
+    <select id="durum">
+      <option value="aktif">Aktif</option>
+      <option value="pasif">Pasif</option>
+    </select><br><br>
+
+    <button type="button" id="kaydetBtn">Kaydet</button>
+  </form>
+ 
+  <h3>Kayıtlı Afet Verileri</h3>
+<table border="1" id="afetTablo">
+  <tr>
+    <th>İl</th>
+    <th>Tür</th>
+    <th>Durum</th>
+    <th>Tarih</th>
+  </tr>
+</table>
+
+
+  <script src="script.js"></script>
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+// Verileri listeleme fonksiyonu
+async function verileriListele() {
+  const tablo = document.getElementById("afetTablo");
+  const querySnapshot = await getDocs(collection(db, "afetler"));
+  
+  querySnapshot.forEach((doc) => {
+    const veri = doc.data();
+    const satir = `
+      <tr>
+        <td>${veri.il}</td>
+        <td>${veri.tur}</td>
+        <td>${veri.durum}</td>
+        <td>${veri.tarih ? new Date(veri.tarih.toDate()).toLocaleString() : "—"}</td>
+      </tr>`;
+    tablo.innerHTML += satir;
+  });
+}
+
+// Sayfa yüklendiğinde otomatik olarak çalışsın
+window.addEventListener("load", verileriListele);
+
+  const firebaseConfig = {
+  apiKey: "AIzaSyDXtTc_CVvuQkGzASDIrMaiRtX7DgLE6I8",
+  authDomain: "afet-bilgi-demo.firebaseapp.com",
+  projectId: "afet-bilgi-demo",
+  storageBucket: "afet-bilgi-demo.firebasestorage.app",
+  messagingSenderId: "599370402977",
+  appId: "1:599370402977:web:3d02ce2adee1d6de4134e0",
+  measurementId: "G-2GE2S6HGTG"
+};
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  document.getElementById("kaydetBtn").addEventListener("click", async () => {
+    const il = document.getElementById("il").value;
+    const tur = document.getElementById("tur").value;
+    const durum = document.getElementById("durum").value;
+
+    try {
+      await addDoc(collection(db, "afetler"), {
+        il: il,
+        tur: tur,
+        durum: durum,
+        tarih: new Date()
+      });
+      alert("Veri Firebase'e kaydedildi!");
+    } catch (e) {
+      console.error("Hata:", e);
+    }
+  });
+</script>
+
+</body>
+</html>
